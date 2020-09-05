@@ -42,17 +42,7 @@ namespace FrogGame
             //draw entities
             foreach(Entity e in EntityManager.GetEntities())
             {
-                spriteBatch.Draw(e.sprite, new Rectangle(((int)e.x * cam.scale) + (int)cam.x, ((int)e.y * cam.scale) + (int)cam.y, e.width * cam.scale, e.height * cam.scale), Color.White);
-
-                if(e.GetType() == typeof(Frog) || e.GetType() == typeof(BadFrog))
-                {
-                    Frog f = (Frog)e;
-                    int jumpFill = (int)(((float)(f.maxJumpCooldown - f.jumpCooldown) / (float)f.maxJumpCooldown) * e.width * cam.scale);
-
-                    spriteBatch.Draw(Sprites.powerbarEmpty, new Rectangle(((int)e.x * cam.scale) + (int)cam.x, ((int)e.y * cam.scale) - 6 + (int)cam.y, e.width * cam.scale, 4), Color.White);
-                    spriteBatch.Draw(Sprites.powerbarFill, new Rectangle(((int)e.x * cam.scale) + (int)cam.x, ((int)e.y * cam.scale) - 6 + (int)cam.y, jumpFill, 4), Color.White);
-                }
-
+                e.Render(spriteBatch);
             }
 
             //render ui
@@ -68,7 +58,14 @@ namespace FrogGame
             spriteBatch.End();
         }
 
-
+        public static void DrawLine(SpriteBatch spriteBatch, Texture2D texture, Vector2 start, Vector2 end)
+        {
+            spriteBatch.Draw(texture, start, null, Color.White,
+                             (float)Math.Atan2(end.Y - start.Y, end.X - start.X),
+                             new Vector2(0f, (float)texture.Height / 2),
+                             new Vector2(Vector2.Distance(start, end), 1f),
+                             SpriteEffects.None, 0f);
+        }
 
     }
 }

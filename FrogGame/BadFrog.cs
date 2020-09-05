@@ -20,6 +20,7 @@ namespace FrogGame
 
         }
 
+        /*
         public override void UpdateLogic()
         {
             if (jumpCooldown > 0)
@@ -53,6 +54,7 @@ namespace FrogGame
 
             }
         }
+        */
 
         public override void Update()
         {

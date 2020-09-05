@@ -9,7 +9,11 @@ namespace FrogGame
     public static class Sprites
     {
 
+        public static Texture2D pixel;
+
         public static Texture2D frog;
+        public static Texture2D frogSquish;
+        public static Texture2D frogSquishExtreme;
         public static Texture2D badFrog;
         public static Texture2D fly;
         public static Texture2D coin;
@@ -24,7 +28,11 @@ namespace FrogGame
 
         public static void LoadTextures(ContentManager content)
         {
+            pixel = content.Load<Texture2D>("img/pixel");
+
             frog = content.Load<Texture2D>("img/frog");
+            frogSquish = content.Load<Texture2D>("img/frog-squish");
+            frogSquishExtreme = content.Load<Texture2D>("img/frog-squish-extreme");
             badFrog = content.Load<Texture2D>("img/bad-frog");
             fly = content.Load<Texture2D>("img/fly");
             coin = content.Load<Texture2D>("img/coin");

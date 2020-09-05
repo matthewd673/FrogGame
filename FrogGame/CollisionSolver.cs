@@ -28,5 +28,12 @@ namespace FrogGame
             return true;
         }
 
+        public static bool IsPointInBounds(float aX, float aY, int aW, int aH, float pX, float pY)
+        {
+            if (pX > aX && pX < aX + aW && pY > aY && pY < aY + aH) return true;
+            
+            return false;
+        }
+
     }
 }

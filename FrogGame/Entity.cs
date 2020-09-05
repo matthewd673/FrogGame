@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace FrogGame
@@ -32,6 +33,11 @@ namespace FrogGame
         public virtual void Update()
         {
             
+        }
+
+        public virtual void Render(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(sprite, new Rectangle((int)(x * Renderer.cam.scale), (int)(y * Renderer.cam.scale), width * Renderer.cam.scale, height * Renderer.cam.scale), Color.White);
         }
 
     }

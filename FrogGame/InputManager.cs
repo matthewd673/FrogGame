@@ -11,11 +11,18 @@ namespace FrogGame
         public static KeyboardState keyState;
         public static MouseState mouseState;
 
+        public static KeyboardState lastKeyState;
+        public static MouseState lastMouseState;
+
         public static int mouseX;
         public static int mouseY;
 
         public static void UpdateInput()
         {
+
+            lastKeyState = keyState;
+            lastMouseState = mouseState;
+
             keyState = Keyboard.GetState();
             mouseState = Mouse.GetState();
 
@@ -33,6 +40,22 @@ namespace FrogGame
                 if (keyState.IsKeyDown(Keys.Enter))
                     Game.InitializeNewGame();
             }
+
+        }
+
+        public static bool MouseHeld()
+        {
+            return mouseState.LeftButton == ButtonState.Pressed && lastMouseState.LeftButton == ButtonState.Pressed;
+        }
+
+        public static void FlingFrog()
+        {
+            Frog f = (Frog) EntityManager.FindFirstEntityOfType(typeof(Frog));
+
+            if (f == null)
+                return;
+
+            bool mouseOnFrog = CollisionSolver.IsPointInBounds(f.x, f.y, f.width, f.height, mouseX, mouseY);
 
         }
 

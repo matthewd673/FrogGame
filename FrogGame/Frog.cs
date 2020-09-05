@@ -1,27 +1,89 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace FrogGame
 {
     public class Frog : PhysicsEntity
     {
 
-        public float jumpAccel = 3f;
+        public float jumpAccel = 1f;
 
         public int jumpCooldown;
-        public int maxJumpCooldown = 200;
+        public int maxJumpCooldown = 100;
+
+        public bool isMoving = false;
+        public bool isSquishing = false;
+
+        public int squishCooldown;
+        public int maxSquishCooldown = 60;
 
         public bool nextCooldownShorter = false;
 
         public Frog(float x, float y) : base(Sprites.frog, x, y, 8, 8)
         {
             jumpCooldown = maxJumpCooldown;
+            squishCooldown = maxSquishCooldown;
         }
 
-
-        public virtual void UpdateLogic()
+        public override void Update()
         {
+
+            //check if moving
+            if (Math.Abs(v.speed) > 0)
+                isMoving = true;
+            else
+                isMoving = false;
+
+            //check if should be preparing jump
+            if((InputManager.MouseHeld() && CollisionSolver.IsPointInBounds(
+                x * Renderer.cam.scale,
+                y * Renderer.cam.scale,
+                width * Renderer.cam.scale,
+                height * Renderer.cam.scale,
+                InputManager.mouseX,
+                InputManager.mouseY
+                )) || InputManager.MouseHeld() && isSquishing) //continues the squish if mouse is in bounds and held, or mouse is held and squish is already in progress (so you can drag out)
+            {
+                isSquishing = true;
+
+                if (squishCooldown > 0)
+                    squishCooldown--;
+
+            }
+            else
+            {
+                isSquishing = false;
+                squishCooldown = maxSquishCooldown;
+            }
+
+            //jump is ready!
+            if (squishCooldown <= 0) 
+            {
+                isSquishing = false;
+                squishCooldown = maxSquishCooldown;
+
+                float angleToMouse = GameMath.GetAngleBetweenPoints(x * Renderer.cam.scale, y * Renderer.cam.scale, InputManager.mouseX, InputManager.mouseY);
+
+                Jump(angleToMouse + (float)Math.PI);
+
+                //Jump(CalculateJumpAngle());
+            }
+
+            //update sprite accordingly
+            if (isSquishing)
+            {
+                if (squishCooldown > (maxSquishCooldown / 2))
+                    sprite = Sprites.frogSquish;
+                else
+                    sprite = Sprites.frogSquishExtreme;
+            }
+            else
+                sprite = Sprites.frog;
+
+            /*
             //jump
             if (jumpCooldown > 0)
                 jumpCooldown--;
@@ -39,6 +101,7 @@ namespace FrogGame
                 //shake screen
                 Renderer.cam.SetShake(6f, 0.5f);
             }
+            */
 
             //check collisions
             List<Entity> colliding = CollisionSolver.GetAllColliding(this);
@@ -74,23 +137,35 @@ namespace FrogGame
                     }
                 }
             }
-        }
-
-        public override void Update()
-        {
-
-            UpdateLogic();
 
             base.Update();
         }
 
         public void Jump(float jumpAngle)
         {
+            /*
             float jumpAX = (float)Math.Sin(jumpAngle) * jumpAccel;
             float jumpAY = (float)Math.Cos(jumpAngle) * jumpAccel;
 
             aX += jumpAX;
             aY += jumpAY;
+            */
+
+            v.SetSpeed(jumpAccel);
+            v.angle = jumpAngle;
+
+
+            //constant decel
+            v.Decelerate(0.1f);
+        }
+
+        public override void Render(SpriteBatch spriteBatch)
+        {
+
+            if(isSquishing)
+                Renderer.DrawLine(spriteBatch, Sprites.pixel, new Vector2((x + 4) * Renderer.cam.scale, (y + 4) * Renderer.cam.scale), new Vector2(InputManager.mouseX, InputManager.mouseY));
+
+            base.Render(spriteBatch);
         }
 
         public float CalculateJumpAngle()

@@ -7,12 +7,11 @@ namespace FrogGame
 {
     public class PhysicsEntity : Entity
     {
-
+        
         public float aX = 0;
         public float aY = 0;
         public float aDecay = 0.1f;
-        public float velX;
-        public float velY;
+        public Velocity v = new Velocity(0, 0);
 
         public PhysicsEntity(Texture2D sprite, float x, float y, int width, int height) : base(sprite, x, y, width, height)
         {
@@ -22,6 +21,7 @@ namespace FrogGame
         public override void Update()
         {
 
+            /*
             float newAX = Math.Abs(aX) - aDecay;
             float newAY = Math.Abs(aY) - aDecay;
 
@@ -46,6 +46,10 @@ namespace FrogGame
 
             x += aX;
             y += aY;
+            */
+
+            x += v.GetSpeedX();
+            y += v.GetSpeedY();
 
             base.Update();
         }
