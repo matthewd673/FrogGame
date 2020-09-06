@@ -55,6 +55,9 @@ namespace FrogGame
             //draw cursor
             spriteBatch.Draw(Sprites.cursor, new Rectangle(InputManager.mouseX - 4, InputManager.mouseY - 4, 8, 8), Color.White);
 
+            //draw debug info
+            spriteBatch.DrawString(Sprites.font, Game.debugOutput, new Vector2(10, 10), Color.Red);
+
             spriteBatch.End();
         }
 

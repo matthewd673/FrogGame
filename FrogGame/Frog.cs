@@ -10,6 +10,7 @@ namespace FrogGame
     {
 
         public float jumpAccel = 1f;
+        public float speed = 1f;
 
         public int jumpCooldown;
         public int maxJumpCooldown = 100;
@@ -18,9 +19,18 @@ namespace FrogGame
         public bool isSquishing = false;
 
         public int squishCooldown;
-        public int maxSquishCooldown = 60;
+        public int maxSquishCooldown = 40;
 
-        public bool nextCooldownShorter = false;
+        public float maxPullDistance = 60;
+        float pullDistance;
+        float pullPercentage;
+
+        public float maxJumpDistance = 60;
+        float aimAngle;
+        float jumpStrength;
+        Vector2 jumpStart;
+        Vector2 target;
+        float remainingJumpDistance;
 
         public Frog(float x, float y) : base(Sprites.frog, x, y, 8, 8)
         {
@@ -32,111 +42,85 @@ namespace FrogGame
         {
 
             //check if moving
+            /*
             if (Math.Abs(v.speed) > 0)
                 isMoving = true;
             else
                 isMoving = false;
-
-            //check if should be preparing jump
-            if((InputManager.MouseHeld() && CollisionSolver.IsPointInBounds(
-                x * Renderer.cam.scale,
-                y * Renderer.cam.scale,
-                width * Renderer.cam.scale,
-                height * Renderer.cam.scale,
-                InputManager.mouseX,
-                InputManager.mouseY
-                )) || InputManager.MouseHeld() && isSquishing) //continues the squish if mouse is in bounds and held, or mouse is held and squish is already in progress (so you can drag out)
-            {
-                isSquishing = true;
-
-                if (squishCooldown > 0)
-                    squishCooldown--;
-
-            }
-            else
-            {
-                isSquishing = false;
-                squishCooldown = maxSquishCooldown;
-            }
-
-            //jump is ready!
-            if (squishCooldown <= 0) 
-            {
-                isSquishing = false;
-                squishCooldown = maxSquishCooldown;
-
-                float angleToMouse = GameMath.GetAngleBetweenPoints(x * Renderer.cam.scale, y * Renderer.cam.scale, InputManager.mouseX, InputManager.mouseY);
-
-                Jump(angleToMouse + (float)Math.PI);
-
-                //Jump(CalculateJumpAngle());
-            }
-
-            //update sprite accordingly
-            if (isSquishing)
-            {
-                if (squishCooldown > (maxSquishCooldown / 2))
-                    sprite = Sprites.frogSquish;
-                else
-                    sprite = Sprites.frogSquishExtreme;
-            }
-            else
-                sprite = Sprites.frog;
-
-            /*
-            //jump
-            if (jumpCooldown > 0)
-                jumpCooldown--;
-            else
-            {
-                if (!nextCooldownShorter)
-                    jumpCooldown = maxJumpCooldown;
-                else
-                    jumpCooldown = maxJumpCooldown / 4;
-
-                nextCooldownShorter = false;
-
-                Jump(CalculateJumpAngle());
-
-                //shake screen
-                Renderer.cam.SetShake(6f, 0.5f);
-            }
             */
 
-            //check collisions
-            List<Entity> colliding = CollisionSolver.GetAllColliding(this);
-            if (colliding.Count > 0)
+            //check if should be preparing jump
+            if (!isMoving)
             {
-                foreach (Entity e in colliding)
+                if ((InputManager.MouseHeld() && CollisionSolver.IsPointInBounds(
+                    x * Renderer.cam.scale,
+                    y * Renderer.cam.scale,
+                    width * Renderer.cam.scale,
+                    height * Renderer.cam.scale,
+                    InputManager.mouseX,
+                    InputManager.mouseY
+                    )) || InputManager.MouseHeld() && isSquishing) //continues the squish if mouse is in bounds and held, or mouse is held and squish is already in progress (so you can drag out)
                 {
-                    if (e.GetType() == typeof(Pickup))
+                    isSquishing = true;
+
+                    if (squishCooldown > 0)
+                        squishCooldown--;
+
+                    jumpStrength = (float)((float)(maxSquishCooldown - squishCooldown) / (float)maxSquishCooldown);
+
+                    //calculate aim angle
+                    float angleToMouse = GameMath.GetAngleBetweenPoints(x * Renderer.cam.scale, y * Renderer.cam.scale, InputManager.mouseX, InputManager.mouseY);
+                    aimAngle = angleToMouse + (float)Math.PI;
+
+                    //calculate mouse pull
+                    pullDistance = GameMath.GetDistanceBetweenPoints((x + 4) * Renderer.cam.scale, (y + 4) * Renderer.cam.scale, InputManager.mouseX, InputManager.mouseY);
+
+                    pullPercentage = (float)(pullDistance / maxPullDistance);
+                    if (pullPercentage > 1)
+                        pullPercentage = 1;
+                    if (pullPercentage < 0.3f)
+                        pullPercentage = 0.5f;
+
+                    //calculate target positioning
+                    float targetDist = maxJumpDistance * jumpStrength * pullPercentage;
+                    float targetX = (float)Math.Sin(aimAngle) * targetDist;
+                    float targetY = (float)Math.Cos(aimAngle) * targetDist;
+
+                    Game.debugOutput = aimAngle.ToString();
+
+                    jumpStart = new Vector2(x, y);
+                    target = new Vector2(targetX + x - 4, targetY + y - 4);
+
+                }
+                else
+                {
+                    if (!InputManager.MouseJustReleased()) //only reset if the mouse wasn't JUST released
                     {
-                        //PICKUP!
-                        Pickup p = (Pickup)e;
-
-                        switch (p.pType)
-                        {
-                            case Pickup.PickupType.Coin:
-                                Game.score++;
-                                break;
-                            case Pickup.PickupType.Fly:
-                                nextCooldownShorter = true;
-                                break;
-                        }
-
-                        p.forRemoval = true;
-
-                    }
-
-                    if (e.GetType() == typeof(BadFrog))
-                    {
-                        //ENEMY :(
-                        Game.health--;
-                        e.forRemoval = true;
-                        Renderer.cam.SetShake(10f, 0.3f);
+                        isSquishing = false;
+                        squishCooldown = maxSquishCooldown;
                     }
                 }
+
+                //jump is ready! (mouse has been released, no longer squishing
+                if (isSquishing && InputManager.MouseJustReleased())
+                {
+                    isSquishing = false;
+                    squishCooldown = maxSquishCooldown;
+
+                    Jump(aimAngle);
+
+                    //Jump(CalculateJumpAngle());
+                }
             }
+
+            //move to target, if necessary
+            if(isMoving)
+                MoveToTarget();
+
+            CheckCollisions();
+
+            //update sprite based on state
+            UpdateSprite();
 
             base.Update();
         }
@@ -151,26 +135,123 @@ namespace FrogGame
             aY += jumpAY;
             */
 
+            /*
             v.SetSpeed(jumpAccel);
             v.angle = jumpAngle;
 
 
             //constant decel
             v.Decelerate(0.1f);
+            */
+
+            isMoving = true;
+        }
+
+        public void MoveToTarget()
+        {
+
+            float adjSpeed = 0;
+
+            float startingDistance = GameMath.GetDistanceBetweenPoints(jumpStart.X, jumpStart.Y, target.X, target.Y);
+            float currentDistance = GameMath.GetDistanceBetweenPoints(x, y, target.X, target.Y);
+
+            adjSpeed = speed * (float)((float)(startingDistance - currentDistance) / (float)startingDistance);
+
+            Game.debugOutput = adjSpeed.ToString();
+
+            //float angle = GameMath.GetAngleBetweenPoints(x, y, target.X, target.Y);
+            //x += (float)Math.Sin(angle) * speed;
+            //y += (float)Math.Cos(angle) * speed;
+
+            Vector2 lPos = GameMath.LerpVectors(new Vector2(x, y), target, 0.15f);
+
+            x = lPos.X;
+            y = lPos.Y;
+
+            remainingJumpDistance = currentDistance;
+
+            //stop if in close proximity
+            if (currentDistance < 3)
+                isMoving = false;
+        }
+
+        public void CheckCollisions()
+        {
+            List<Entity> colliding = CollisionSolver.GetAllColliding(this);
+
+            foreach(Entity e in colliding)
+            {
+                Type eType = e.GetType();
+
+                if(eType == typeof(Wall))
+                {
+                    Wall w = (Wall)e;
+
+                    //THESE BOUNCE PHYSICS ARE WRONG :(
+
+                    bool travellingHorizontally = true;
+                    if (Math.Cos(aimAngle) > Math.Sin(aimAngle))
+                        travellingHorizontally = false;
+
+                    float inverseAngle = aimAngle;
+
+                    if (travellingHorizontally)
+                        inverseAngle -= (float)(Math.PI / 2);
+                    else
+                        inverseAngle += (float)(Math.PI / 2);
+
+                    //float inverseAngle = aimAngle - (float)(Math.PI / 2);
+                    float newTargetX = (float)Math.Sin(inverseAngle) * remainingJumpDistance;
+                    float newTargetY = (float)Math.Cos(inverseAngle) * remainingJumpDistance;
+
+                    target = new Vector2(newTargetX + x, newTargetY + y);
+
+                }
+            }
         }
 
         public override void Render(SpriteBatch spriteBatch)
         {
 
-            if(isSquishing)
-                Renderer.DrawLine(spriteBatch, Sprites.pixel, new Vector2((x + 4) * Renderer.cam.scale, (y + 4) * Renderer.cam.scale), new Vector2(InputManager.mouseX, InputManager.mouseY));
+            if (isSquishing)
+            {
+                //draw mouse angle line
+                Renderer.DrawLine(spriteBatch,
+                    Sprites.pixel,
+                    new Vector2((x + 4) * Renderer.cam.scale, (y + 4) * Renderer.cam.scale),
+                    new Vector2(InputManager.mouseX, InputManager.mouseY));
+            }
 
+            if (isSquishing || isMoving)
+            {
+                //draw landing target
+                //adjust target sprite based on frog state
+                Texture2D targetSprite = Sprites.target;
+                if (isMoving)
+                    targetSprite = Sprites.targetLanding;
+
+                spriteBatch.Draw(targetSprite,
+                    new Rectangle((int)target.X * Renderer.cam.scale, (int)target.Y * Renderer.cam.scale, 8 * Renderer.cam.scale, 8 * Renderer.cam.scale),
+                    Color.White);
+            }
             base.Render(spriteBatch);
         }
 
-        public float CalculateJumpAngle()
+        public void UpdateSprite()
         {
-            return GameMath.GetAngleBetweenPoints(x, y, InputManager.mouseX / Renderer.cam.scale, InputManager.mouseY / Renderer.cam.scale);
+            if (isSquishing)
+            {
+                if (squishCooldown > (maxSquishCooldown / 2))
+                    sprite = Sprites.frogSquish;
+                else
+                    sprite = Sprites.frogSquishExtreme;
+            }
+            else if (isMoving)
+            {
+                sprite = Sprites.frogMoving;
+            }
+            else
+                sprite = Sprites.frog;
         }
 
     }

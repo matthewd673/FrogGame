@@ -48,6 +48,11 @@ namespace FrogGame
             return mouseState.LeftButton == ButtonState.Pressed && lastMouseState.LeftButton == ButtonState.Pressed;
         }
 
+        public static bool MouseJustReleased()
+        {
+            return mouseState.LeftButton == ButtonState.Released && lastMouseState.LeftButton == ButtonState.Pressed;
+        }
+
         public static void FlingFrog()
         {
             Frog f = (Frog) EntityManager.FindFirstEntityOfType(typeof(Frog));

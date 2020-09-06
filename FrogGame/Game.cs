@@ -12,6 +12,9 @@ namespace FrogGame
         public static int score;
         public static int health;
 
+
+        public static string debugOutput = "";
+
         public enum GameState
         {
             Title,
@@ -101,6 +104,24 @@ namespace FrogGame
             health = 3;
 
             EntityManager.AddEntity(new Frog(20, 20));
+
+            GenerateMap();
+            EntityManager.AddEntity(new Wall(60, 60));
+        }
+
+        static void GenerateMap()
+        {
+            for(int i = 0; i < 25; i++)
+            {
+                EntityManager.AddEntity(new Wall(i * 8, 0));
+                EntityManager.AddEntity(new Wall(i * 8, 142));
+            }
+
+            for(int j = 0; j < 19; j++)
+            {
+                EntityManager.AddEntity(new Wall(0, j * 8));
+                EntityManager.AddEntity(new Wall(192, j * 8));
+            }
         }
 
         protected override void Draw(GameTime gameTime)
