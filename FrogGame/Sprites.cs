@@ -15,6 +15,7 @@ namespace FrogGame
         public static Texture2D frogSquish;
         public static Texture2D frogSquishExtreme;
         public static Texture2D frogMoving;
+        public static Texture2D tounge;
 
         public static Texture2D badFrog;
         
@@ -25,6 +26,7 @@ namespace FrogGame
         public static Texture2D wall;
         public static Texture2D background;
 
+        public static Texture2D dragLine;
         public static Texture2D target;
         public static Texture2D targetLanding;
         public static Texture2D powerbarFill;
@@ -45,6 +47,7 @@ namespace FrogGame
             frogSquish = content.Load<Texture2D>("img/frog-squish");
             frogSquishExtreme = content.Load<Texture2D>("img/frog-squish-extreme");
             frogMoving = content.Load<Texture2D>("img/frog-moving");
+            tounge = content.Load<Texture2D>("img/tounge");
 
             badFrog = content.Load<Texture2D>("img/bad-frog");
             
@@ -55,6 +58,7 @@ namespace FrogGame
             wall = content.Load<Texture2D>("img/wall");
             background = content.Load<Texture2D>("img/ground");
 
+            dragLine = content.Load<Texture2D>("img/drag-line");
             target = content.Load<Texture2D>("img/target");
             targetLanding = content.Load<Texture2D>("img/target-landing");
             powerbarFill = content.Load<Texture2D>("img/powerbar-fill");
