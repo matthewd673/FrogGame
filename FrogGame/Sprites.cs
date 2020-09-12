@@ -15,12 +15,19 @@ namespace FrogGame
         public static Texture2D frogSquish;
         public static Texture2D frogSquishExtreme;
         public static Texture2D frogMoving;
+        public static Texture2D frogSelected;
+        public static Texture2D frogSquishSelected;
+        public static Texture2D frogSquishExtremeSelected;
         public static Texture2D tounge;
 
         public static Texture2D badFrog;
+        public static Texture2D badFrogSquish;
+        public static Texture2D badFrogSquishExtreme;
+        public static Texture2D badFrogMoving;
         
         public static Texture2D fly;
         public static Texture2D coin;
+        public static Texture2D holoFrog;
 
         public static Texture2D crate;
         public static Texture2D wall;
@@ -31,6 +38,7 @@ namespace FrogGame
         public static Texture2D targetLanding;
         public static Texture2D powerbarFill;
         public static Texture2D powerbarEmpty;
+        public static Texture2D autoStatus;
         public static Texture2D heart;
         public static Texture2D cursor;
 
@@ -47,12 +55,19 @@ namespace FrogGame
             frogSquish = content.Load<Texture2D>("img/frog-squish");
             frogSquishExtreme = content.Load<Texture2D>("img/frog-squish-extreme");
             frogMoving = content.Load<Texture2D>("img/frog-moving");
+            frogSelected = content.Load<Texture2D>("img/frog-selected");
+            frogSquishSelected = content.Load<Texture2D>("img/frog-squish-selected");
+            frogSquishExtremeSelected = content.Load<Texture2D>("img/frog-squish-extreme-selected");
             tounge = content.Load<Texture2D>("img/tounge");
 
             badFrog = content.Load<Texture2D>("img/bad-frog");
+            badFrogSquish = content.Load<Texture2D>("img/bad-frog-squish");
+            badFrogSquishExtreme = content.Load<Texture2D>("img/bad-frog-squish-extreme");
+            badFrogMoving = content.Load<Texture2D>("img/bad-frog-moving");
             
             fly = content.Load<Texture2D>("img/fly");
             coin = content.Load<Texture2D>("img/coin");
+            holoFrog = content.Load<Texture2D>("img/holo-frog");
 
             crate = content.Load<Texture2D>("img/crate");
             wall = content.Load<Texture2D>("img/wall");
@@ -63,6 +78,7 @@ namespace FrogGame
             targetLanding = content.Load<Texture2D>("img/target-landing");
             powerbarFill = content.Load<Texture2D>("img/powerbar-fill");
             powerbarEmpty = content.Load<Texture2D>("img/powerbar-empty");
+            autoStatus = content.Load<Texture2D>("img/auto-status");
             heart = content.Load<Texture2D>("img/heart");
             cursor = content.Load<Texture2D>("img/cursor");
 

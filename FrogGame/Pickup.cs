@@ -11,6 +11,7 @@ namespace FrogGame
         {
             Coin,
             Fly,
+            HoloFrog,
         }
 
         public PickupType pType;
@@ -27,6 +28,11 @@ namespace FrogGame
                     break;
                 case PickupType.Fly:
                     sprite = Sprites.fly;
+                    break;
+                case PickupType.HoloFrog:
+                    sprite = Sprites.holoFrog;
+                    width = 8;
+                    height = 8;
                     break;
             }
         }

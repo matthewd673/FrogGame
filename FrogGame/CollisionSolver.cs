@@ -35,5 +35,26 @@ namespace FrogGame
             return false;
         }
 
+        public static List<Entity> GetAllPotentiallyColliding(float x, float y, int width, int height, bool onlyWalls = false)
+        {
+            List<Entity> colliding = new List<Entity>();
+
+            foreach(Entity e in EntityManager.GetEntities())
+            {
+                if (IsColliding(x, y, width, height, e.x, e.y, e.width, e.height))
+                {
+                    if(onlyWalls)
+                    {
+                        if (e.GetType() == typeof(Wall))
+                            colliding.Add(e);
+                    }
+                    else
+                        colliding.Add(e);
+                }
+            }
+
+            return colliding;
+        }
+
     }
 }

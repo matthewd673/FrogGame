@@ -7,7 +7,6 @@ namespace FrogGame
     public static class Spawner
     {
 
-
         static int enemySpawnCooldown = 500;
         static int maxEnemySpawnCooldown = 500;
 
@@ -55,7 +54,7 @@ namespace FrogGame
             int spawnX = rng.Next(0, Renderer.cam.width / Renderer.cam.scale);
             int spawnY = rng.Next(0, Renderer.cam.height / Renderer.cam.scale);
 
-            Pickup pickup = new Pickup((Pickup.PickupType)rng.Next(2), spawnX, spawnY);
+            Pickup pickup = new Pickup((Pickup.PickupType)2, spawnX, spawnY);
             EntityManager.AddEntity(pickup);
         }
 

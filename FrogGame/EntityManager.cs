@@ -8,6 +8,7 @@ namespace FrogGame
     {
 
         static List<Entity> entityList = new List<Entity>();
+        static List<Entity> addQueue = new List<Entity>();
 
         public static List<Entity> GetEntities()
         {
@@ -21,7 +22,7 @@ namespace FrogGame
 
         public static void AddEntity(Entity e)
         {
-            entityList.Add(e);
+            addQueue.Add(e);
         }
 
         public static void RemoveEntity(Entity e)
@@ -44,6 +45,10 @@ namespace FrogGame
                     i--;
                 }
             }
+
+            //add from the add queue
+            entityList.AddRange(addQueue);
+            addQueue.Clear();
         }
 
         public static Entity FindFirstEntityOfType(Type t)

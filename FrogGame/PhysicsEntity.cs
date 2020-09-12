@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace FrogGame
@@ -67,8 +68,7 @@ namespace FrogGame
             v.vX += a.aX;
             v.vY += a.aY;
 
-            x += v.vX;
-            y += v.vY;
+            Translate(new Vector2(x, y), new Vector2(x + v.vX, y + v.vY));
 
             //reset acceleration
             a = new Acceleration(0, 0);
@@ -78,6 +78,39 @@ namespace FrogGame
                 v = new Velocity(0, 0);
 
             base.Update();
+        }
+
+        public void Translate(Vector2 currentPos, Vector2 newPos)
+        {
+
+            List<Entity> newPosCollides = CollisionSolver.GetAllPotentiallyColliding(newPos.X, newPos.Y, width, height, onlyWalls: true);
+            if (newPosCollides.Count > 0)
+            {
+                //it has hit one wall (or more)
+                Bounce(newPosCollides[0]);
+            }
+            else
+            {
+                x = newPos.X;
+                y = newPos.Y;
+            }
+
+        }
+
+        public void Bounce(Entity col)
+        {
+            float movementAngle = GameMath.GetAngleBetweenPoints(x, y, v.vX, v.vY);
+
+            if (Math.Abs((x + 4) - (col.x + (col.width / 2))) >= Math.Abs((y + 4) - (col.y + (col.height / 2))))
+            {
+                //predominantly horizontal
+                v.vX = -v.vX;
+            }
+            else
+            {
+                //predominantly vertical
+                v.vY = -v.vY;
+            }
         }
 
     }

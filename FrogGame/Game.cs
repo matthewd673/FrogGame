@@ -106,21 +106,32 @@ namespace FrogGame
             EntityManager.AddEntity(new Frog(20, 20));
 
             GenerateMap();
-            EntityManager.AddEntity(new Wall(60, 60));
+            EntityManager.AddEntity(new Wall(60, 60, 8, 8));
         }
 
         static void GenerateMap()
         {
+            
             for(int i = 0; i < 25; i++)
             {
-                EntityManager.AddEntity(new Wall(i * 8, 0));
-                EntityManager.AddEntity(new Wall(i * 8, 142));
+                EntityManager.AddEntity(new Wall(i * 8, 0, 8, 8));
+                EntityManager.AddEntity(new Wall(i * 8, 142, 8, 8));
             }
 
-            for(int j = 0; j < 19; j++)
+
+            /*
+            EntityManager.AddEntity(new Wall(0, 0, 200, 8));
+            EntityManager.AddEntity(new Wall(120, 0, 200, 8));
+
+            EntityManager.AddEntity(new Wall(0, 0, 8, 150));
+            EntityManager.AddEntity(new Wall(192, 0, 8, 150));
+            */
+
+
+            for (int j = 0; j < 19; j++)
             {
-                EntityManager.AddEntity(new Wall(0, j * 8));
-                EntityManager.AddEntity(new Wall(192, j * 8));
+                EntityManager.AddEntity(new Wall(0, j * 8, 8, 8));
+                EntityManager.AddEntity(new Wall(192, j * 8, 8, 8));
             }
         }
 
