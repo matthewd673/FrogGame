@@ -37,7 +37,7 @@ namespace FrogGame
 
         public virtual void Render(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(sprite, new Rectangle((int)(x * Renderer.cam.scale), (int)(y * Renderer.cam.scale), width * Renderer.cam.scale, height * Renderer.cam.scale), Color.White);
+            spriteBatch.Draw(sprite, Renderer.GetRenderRect(x, y, width, height), Color.White);
         }
 
     }

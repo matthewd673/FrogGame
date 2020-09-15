@@ -39,8 +39,12 @@ namespace FrogGame
         public static Texture2D powerbarFill;
         public static Texture2D powerbarEmpty;
         public static Texture2D autoStatus;
-        public static Texture2D heart;
+        public static Texture2D popupPlusOne;
+        public static Texture2D popupMinusOne;
+        public static Texture2D popupNewFrog;
+        public static Texture2D popupNewBadFrog;
         public static Texture2D cursor;
+        public static Texture2D cursorBounding;
 
         public static Texture2D title;
         public static Texture2D end;
@@ -79,8 +83,12 @@ namespace FrogGame
             powerbarFill = content.Load<Texture2D>("img/powerbar-fill");
             powerbarEmpty = content.Load<Texture2D>("img/powerbar-empty");
             autoStatus = content.Load<Texture2D>("img/auto-status");
-            heart = content.Load<Texture2D>("img/heart");
+            popupPlusOne = content.Load<Texture2D>("img/plus-one-status");
+            popupMinusOne = content.Load<Texture2D>("img/minus-one-status");
+            popupNewFrog = content.Load<Texture2D>("img/new-frog-status");
+            popupNewBadFrog = content.Load<Texture2D>("img/new-badfrog-status");
             cursor = content.Load<Texture2D>("img/cursor");
+            cursorBounding = content.Load<Texture2D>("img/cursor-bounding");
 
             title = content.Load<Texture2D>("img/title");
             end = content.Load<Texture2D>("img/end");

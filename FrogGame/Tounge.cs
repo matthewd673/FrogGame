@@ -16,12 +16,12 @@ namespace FrogGame
         public Vector2 target;
         public Entity targetEntity;
 
-        public Frog parent;
+        public Entity parent;
 
         public bool isOut = false;
         bool returningToParent = false;
 
-        public Tounge(Frog parent, float x, float y, Vector2 target)
+        public Tounge(Entity parent, float x, float y, Vector2 target)
         {
             this.parent = parent;
             this.x = x;
@@ -59,7 +59,10 @@ namespace FrogGame
                     if (targetEntity != null)
                         targetEntity.forRemoval = true;
                     //report back to frog
-                    parent.ToungeGrabbed(targetEntity);
+                    if(parent.GetType() == typeof(Frog))
+                        ((Frog)parent).ToungeGrabbed(targetEntity);
+                    if (parent.GetType() == typeof(BadFrog))
+                        ((BadFrog)parent).ToungeGrabbed(targetEntity);
 
                     //return to parent
                     targetEntity = null;

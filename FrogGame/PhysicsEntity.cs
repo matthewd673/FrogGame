@@ -63,19 +63,22 @@ namespace FrogGame
         public override void Update()
         {
 
-            ApplyFriction();
+            if (!Game.velocityFrozen)
+            {
+                ApplyFriction();
 
-            v.vX += a.aX;
-            v.vY += a.aY;
+                v.vX += a.aX;
+                v.vY += a.aY;
 
-            Translate(new Vector2(x, y), new Vector2(x + v.vX, y + v.vY));
+                Translate(new Vector2(x, y), new Vector2(x + v.vX, y + v.vY));
 
-            //reset acceleration
-            a = new Acceleration(0, 0);
+                //reset acceleration
+                a = new Acceleration(0, 0);
 
-            //prevent drifting
-            if (GetStrengthOfMotion() < 0.1f)
-                v = new Velocity(0, 0);
+                //prevent drifting
+                if (GetStrengthOfMotion() < 0.1f)
+                    v = new Velocity(0, 0);
+            }
 
             base.Update();
         }
@@ -102,15 +105,11 @@ namespace FrogGame
             float movementAngle = GameMath.GetAngleBetweenPoints(x, y, v.vX, v.vY);
 
             if (Math.Abs((x + 4) - (col.x + (col.width / 2))) >= Math.Abs((y + 4) - (col.y + (col.height / 2))))
-            {
                 //predominantly horizontal
                 v.vX = -v.vX;
-            }
             else
-            {
                 //predominantly vertical
                 v.vY = -v.vY;
-            }
         }
 
     }

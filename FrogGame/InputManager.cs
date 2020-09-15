@@ -43,6 +43,26 @@ namespace FrogGame
 
         }
 
+        public static bool MouseRightJustPressed()
+        {
+            return mouseState.RightButton == ButtonState.Pressed && lastMouseState.RightButton == ButtonState.Released;
+        }
+
+        public static bool MouseRightHeld()
+        {
+            return mouseState.RightButton == ButtonState.Pressed && lastMouseState.RightButton == ButtonState.Pressed;
+        }
+
+        public static bool MouseRightJustReleased()
+        {
+            return mouseState.RightButton == ButtonState.Released && lastMouseState.RightButton == ButtonState.Pressed;
+        }
+
+        public static bool MouseRightDown()
+        {
+            return mouseState.RightButton == ButtonState.Pressed;
+        }
+
         public static bool MouseHeld()
         {
             return mouseState.LeftButton == ButtonState.Pressed && lastMouseState.LeftButton == ButtonState.Pressed;

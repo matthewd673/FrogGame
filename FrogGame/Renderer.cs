@@ -11,6 +11,8 @@ namespace FrogGame
 
         public static Camera cam = new Camera(0, 0, 800, 600, 4);
 
+        public static readonly Color OFFWHITE = new Color(248, 255, 215);
+
         public static void Render(SpriteBatch spriteBatch)
         {
 
@@ -46,14 +48,8 @@ namespace FrogGame
             }
 
             //render ui
-            //healthbar
-            for(int i = 0; i < Game.health; i++)
-            {
-                spriteBatch.Draw(Sprites.heart, new Rectangle(i * 38, 0, 36, 36), Color.White);
-            }
-
             //draw cursor
-            spriteBatch.Draw(Sprites.cursor, new Rectangle(InputManager.mouseX, InputManager.mouseY, 16, 16), Color.White);
+            CursorManager.Render(spriteBatch);
 
             //draw debug info
             spriteBatch.DrawString(Sprites.font, Game.debugOutput, new Vector2(10, 10), Color.Red);
@@ -68,6 +64,19 @@ namespace FrogGame
                              new Vector2(0f, (float)texture.Height / 2),
                              new Vector2(Vector2.Distance(start, end), 1f),
                              SpriteEffects.None, 0f);
+        }
+
+        public static void DrawLineRect(SpriteBatch spriteBatch, int x, int y, int w, int h, Color color)
+        {
+            spriteBatch.Draw(Sprites.pixel, new Rectangle(x, y, w, 2), color);
+            spriteBatch.Draw(Sprites.pixel, new Rectangle(x, y, 2, h), color);
+            spriteBatch.Draw(Sprites.pixel, new Rectangle(x, y + h, w, 2), color);
+            spriteBatch.Draw(Sprites.pixel, new Rectangle(x + w, y, 2, h), color);
+        }
+
+        public static Rectangle GetRenderRect(float x, float y, int w, int h)
+        {
+            return new Rectangle((int)(x - cam.x) * cam.scale, (int)(y - cam.y) * cam.scale, w * cam.scale, h * cam.scale);
         }
 
     }

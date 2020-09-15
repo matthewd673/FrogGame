@@ -10,6 +10,7 @@ namespace FrogGame
     {
 
         public static int teamCount = 0;
+        public static int maxTeamCount = 9;
 
         float minAttackDist = 80;
 
@@ -33,45 +34,9 @@ namespace FrogGame
         public BadFrog(float x, float y) : base(Sprites.badFrog, x, y, 8, 8)
         {
             squishCooldown = maxSquishCooldown;
-            //tounge = new Tounge(this, 0, 0, new Vector2(0, 0));
+            tounge = new Tounge(this, 0, 0, new Vector2(0, 0));
             teamCount++;
         }
-
-        /*
-        public override void UpdateLogic()
-        {
-            if (jumpCooldown > 0)
-                jumpCooldown--;
-            else
-            {
-                jumpCooldown = maxJumpCooldown;
-
-                //calculate jump direction
-                //get distance toward friendly frog
-                Frog friendlyFrog = (Frog)EntityManager.FindFirstEntityOfType(typeof(Frog));
-
-                if (friendlyFrog == null)
-                    return;
-
-                float distToFrog = GameMath.GetDistanceBetweenPoints(x, y, friendlyFrog.x, friendlyFrog.y);
-
-                //target random point by default
-                float tX = rng.Next(0, Renderer.cam.width / Renderer.cam.scale);
-                float tY = rng.Next(0, Renderer.cam.height / Renderer.cam.scale);
-
-                if (distToFrog <= minAttackDist)
-                {
-                    //target frog
-                    tX = friendlyFrog.x;
-                    tY = friendlyFrog.y;
-                }
-
-                //jump
-                Jump(GameMath.GetAngleBetweenPoints(x, y, tX, tY));
-
-            }
-        }
-        */
 
         public override void Update()
         {
@@ -118,9 +83,48 @@ namespace FrogGame
                 }
             }
 
+            //handle tounge
+            if (!tounge.isOut)
+            {
+                //update position
+                tounge.x = x;
+                tounge.y = y;
+
+                //search for something to grab
+                foreach (Entity e in EntityManager.GetEntities())
+                {
+                    if (e.GetType() == typeof(Pickup) && GameMath.GetDistanceBetweenPoints(x, y, e.x, e.y) < toungeRange)
+                    {
+                        Pickup p = (Pickup)e;
+
+                        tounge.SetTarget(new Vector2(p.x, p.y), p);
+                        tounge.isOut = true;
+
+                    }
+                }
+            }
+
+            //update tounge if out
+            if (tounge.isOut)
+                tounge.Update();
+
             UpdateSprite();
 
             base.Update();
+        }
+
+        public override void Render(SpriteBatch spriteBatch)
+        {
+            //render tounge behind everything else
+            if (tounge.isOut)
+            {
+                Renderer.DrawLine(spriteBatch,
+                    Sprites.tounge,
+                    new Vector2((x + 4) * Renderer.cam.scale, (y + 4) * Renderer.cam.scale),
+                    new Vector2(tounge.x * Renderer.cam.scale, tounge.y * Renderer.cam.scale));
+            }
+
+            base.Render(spriteBatch);
         }
 
         public void UpdateSprite()
@@ -159,6 +163,34 @@ namespace FrogGame
 
             return nearestGoal;
 
+        }
+
+        public void ToungeGrabbed(Entity e)
+        {
+            e.forRemoval = true;
+            if (e.GetType() == typeof(Pickup))
+            {
+                Pickup p = (Pickup)e;
+                if (p.pType == Pickup.PickupType.HoloFrog)
+                {
+                    if (teamCount < maxTeamCount)
+                    {
+                        BadFrog newBadFrog = new BadFrog(p.x, p.y);
+                        EntityManager.AddEntity(newBadFrog);
+                        EntityManager.AddEntity(new Popup(Popup.PopupType.NewBadFrog, x + 2, y - 4));
+                    }
+                }
+                //if (p.pType == Pickup.PickupType.Coin)
+                    //Game.score++;
+            }
+        }
+
+        public void Kill()
+        {
+            forRemoval = true;
+            teamCount--;
+            EntityManager.AddEntity(new Popup(Popup.PopupType.PlusOne, x + 2, y - 4));
+            Game.FreezeVelocity();
         }
 
     }

@@ -15,6 +15,7 @@ namespace FrogGame
         public bool isMoving = false;
         public bool isSquishing = false;
         public bool isSelected = false;
+        public bool isInGroup = false;
         public bool wasSelected = false;
 
         public int squishCooldown;
@@ -91,8 +92,11 @@ namespace FrogGame
                 isSelected = true;
                 timeSinceUserControl = 0;
             }
-            else
+            else if (InputManager.MouseJustReleased())
                 isSelected = false;
+
+            if (isInGroup)
+                isSelected = true;
 
             if (timeSinceUserControl >= maxTimeSinceUserControl)
                 automatic = true;
@@ -103,10 +107,13 @@ namespace FrogGame
             if (!isMoving)
             {
 
+                /* DISABLE AUTOMATIC CONTROL
                 if (!automatic)
                     UserControl();
                 else
                     AutoControl();
+                */
+                UserControl();
 
             }
 
@@ -145,7 +152,7 @@ namespace FrogGame
 
         void UserControl()
         {
-            if (isSelected)
+            if (isSelected && !isInGroup)
             {
                 isSquishing = true;
 
@@ -257,6 +264,16 @@ namespace FrogGame
                 {
                     ToungeGrabbed(e);
                 }
+                if(eType == typeof(BadFrog))
+                {
+                    BadFrog b = (BadFrog)e;
+                    if (GetStrengthOfMotion() > b.GetStrengthOfMotion())
+                        b.Kill();
+                    else
+                        Kill();
+                    //dramatic effect
+                    Renderer.cam.SetShake(2f, 0.4f);
+                }
             }
         }
 
@@ -283,23 +300,8 @@ namespace FrogGame
 
             if (automatic)
             {
-                spriteBatch.Draw(Sprites.autoStatus, new Rectangle((int)(x + 2) * Renderer.cam.scale, (int)(y - 6) * Renderer.cam.scale, 16, 16), Color.White);
+                spriteBatch.Draw(Sprites.autoStatus, Renderer.GetRenderRect(x + 2, y - 6, 4, 4), Color.White);
             }
-
-            /*
-            if (isSquishing || isMoving)
-            {
-                //draw landing target
-                //adjust target sprite based on frog state
-                Texture2D targetSprite = Sprites.target;
-                if (isMoving)
-                    targetSprite = Sprites.targetLanding;
-
-                spriteBatch.Draw(targetSprite,
-                    new Rectangle((int)target.X * Renderer.cam.scale, (int)target.Y * Renderer.cam.scale, 8 * Renderer.cam.scale, 8 * Renderer.cam.scale),
-                    Color.White);
-            }
-            */
 
             base.Render(spriteBatch);
         }
@@ -343,13 +345,22 @@ namespace FrogGame
                 {
                     if (teamCount < maxTeamCount)
                     {
-                        Frog newFrog = new Frog(16, 16);
+                        Frog newFrog = new Frog(p.x, p.y);
                         EntityManager.AddEntity(newFrog);
+                        EntityManager.AddEntity(new Popup(Popup.PopupType.NewFrog, x + 2, y - 4));
                     }
                 }
                 if (p.pType == Pickup.PickupType.Coin)
                     Game.score++;
             }
+        }
+
+        public void Kill()
+        {
+            forRemoval = true;
+            teamCount--;
+            EntityManager.AddEntity(new Popup(Popup.PopupType.MinusOne, x + 2, y - 4));
+            Game.FreezeVelocity();
         }
 
     }
