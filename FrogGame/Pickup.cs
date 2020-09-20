@@ -10,7 +10,6 @@ namespace FrogGame
         public enum PickupType
         {
             Coin,
-            Fly,
             HoloFrog,
         }
 
@@ -25,9 +24,6 @@ namespace FrogGame
             {
                 case PickupType.Coin:
                     sprite = Sprites.coin;
-                    break;
-                case PickupType.Fly:
-                    sprite = Sprites.fly;
                     break;
                 case PickupType.HoloFrog:
                     sprite = Sprites.holoFrog;

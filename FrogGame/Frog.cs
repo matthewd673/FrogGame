@@ -9,8 +9,11 @@ namespace FrogGame
     public class Frog : PhysicsEntity
     {
 
-        public static int teamCount = 0;
+        public static int teamCount = 1;
         public static int maxTeamCount = 6;
+        public static int points = 0;
+        public static int enemiesKilled = 0;
+        public static int friendsKilled = 0;
 
         public bool isMoving = false;
         public bool isSquishing = false;
@@ -45,7 +48,6 @@ namespace FrogGame
         {
             squishCooldown = maxSquishCooldown;
             tounge = new Tounge(this, 0, 0, new Vector2(0, 0));
-            teamCount++;
         }
 
         public override void Update()
@@ -274,6 +276,10 @@ namespace FrogGame
                     //dramatic effect
                     Renderer.cam.SetShake(2f, 0.4f);
                 }
+                if(eType == typeof(Frog) && e != this && x == e.x && y == e.y) //don't get stuck on each other
+                {
+                    AddForce(1, 0);
+                }
             }
         }
 
@@ -348,10 +354,11 @@ namespace FrogGame
                         Frog newFrog = new Frog(p.x, p.y);
                         EntityManager.AddEntity(newFrog);
                         EntityManager.AddEntity(new Popup(Popup.PopupType.NewFrog, x + 2, y - 4));
+                        teamCount++;
                     }
                 }
                 if (p.pType == Pickup.PickupType.Coin)
-                    Game.score++;
+                    points++;
             }
         }
 

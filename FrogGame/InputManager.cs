@@ -41,6 +41,12 @@ namespace FrogGame
                     Game.InitializeNewGame();
             }
 
+            if(Game.state == Game.GameState.Victory)
+            {
+                if (keyState.IsKeyDown(Keys.Enter))
+                    Game.InitializeNewGame();
+            }
+
         }
 
         public static bool MouseRightJustPressed()

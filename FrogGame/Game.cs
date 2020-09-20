@@ -22,6 +22,7 @@ namespace FrogGame
             Title,
             Game,
             End,
+            Victory,
         }
 
         public static GameState state = GameState.Title;
@@ -53,8 +54,6 @@ namespace FrogGame
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             Sprites.LoadTextures(Content);
-
-            // TODO: use this.Content to load your game content here
         }
 
         protected override void Update(GameTime gameTime)
@@ -80,6 +79,9 @@ namespace FrogGame
 
                 if (Frog.teamCount <= 0)
                     LoadEndScreen();
+
+                if (Frog.points >= 6)
+                    LoadWinScreen();
             }
 
             if (state == GameState.Title)
@@ -88,6 +90,11 @@ namespace FrogGame
             }
 
             if (state == GameState.End)
+            {
+                InputManager.UpdateInput();
+            }
+
+            if (state == GameState.Victory)
             {
                 InputManager.UpdateInput();
             }
@@ -105,6 +112,11 @@ namespace FrogGame
             state = GameState.End;
         }
 
+        public static void LoadWinScreen()
+        {
+            state = GameState.Victory;
+        }
+
         public static void InitializeNewGame()
         {
             state = GameState.Game;
@@ -113,9 +125,10 @@ namespace FrogGame
             score = 0;
 
             EntityManager.AddEntity(new Frog(20, 20));
+            Frog.teamCount = 1;
 
             GenerateMap();
-            EntityManager.AddEntity(new Wall(60, 60, 8, 8));
+            //EntityManager.AddEntity(new Wall(60, 60, 8, 8));
         }
 
         static void GenerateMap()

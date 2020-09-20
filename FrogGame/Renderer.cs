@@ -32,6 +32,13 @@ namespace FrogGame
                 return;
             }
 
+            if (Game.state == Game.GameState.Victory)
+            {
+                spriteBatch.Draw(Sprites.victory, new Rectangle(0, 0, cam.width, cam.height), Color.White);
+                spriteBatch.End();
+                return;
+            }
+
             //draw background
             for (int i = 0; i < 25; i++)
             {
@@ -48,6 +55,12 @@ namespace FrogGame
             }
 
             //render ui
+            //draw portraits
+            spriteBatch.Draw(Sprites.frogPortrait, new Rectangle(4, 4, 32, 32), Color.White);
+            for (int i = 0; i < Frog.points; i++)
+                spriteBatch.Draw(Sprites.frogBar, new Rectangle(42 + (16 * i), 4, 16, 32), Color.White);
+
+            spriteBatch.Draw(Sprites.badFrogPortrait, new Rectangle(764, 4, 32, 32), Color.White);
             //draw cursor
             CursorManager.Render(spriteBatch);
 

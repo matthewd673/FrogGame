@@ -7,11 +7,12 @@ namespace FrogGame
     public static class Spawner
     {
 
-        static int enemySpawnCooldown = 500;
-        static int maxEnemySpawnCooldown = 500;
+        static int enemySpawnCooldown = 0;
+        static int maxEnemySpawnCooldown = 260;
+        static int lowestMaxSpawnCooldown = 180;
 
         static int pickupSpawnCooldown = 100;
-        static int maxPickupSpawnCooldown = 300;
+        static int maxPickupSpawnCooldown = 200;
 
         static Random rng = new Random();
 
@@ -24,8 +25,8 @@ namespace FrogGame
             {
                 enemySpawnCooldown = maxEnemySpawnCooldown;
 
-                if (maxEnemySpawnCooldown < 5000)
-                    maxEnemySpawnCooldown += 100;
+                if (maxEnemySpawnCooldown > lowestMaxSpawnCooldown)
+                    maxEnemySpawnCooldown -= 10;
 
                 SpawnEnemy();
             }
@@ -42,8 +43,8 @@ namespace FrogGame
 
         static void SpawnEnemy()
         {
-            int spawnX = rng.Next(0, Renderer.cam.width / Renderer.cam.scale);
-            int spawnY = rng.Next(0, Renderer.cam.height / Renderer.cam.scale);
+            int spawnX = rng.Next(8, (Renderer.cam.width / Renderer.cam.scale) - 16);
+            int spawnY = rng.Next(8, (Renderer.cam.height / Renderer.cam.scale) - 16);
 
             BadFrog badFrog = new BadFrog(spawnX, spawnY);
             EntityManager.AddEntity(badFrog);
@@ -51,10 +52,10 @@ namespace FrogGame
 
         static void SpawnPickup()
         {
-            int spawnX = rng.Next(0, Renderer.cam.width / Renderer.cam.scale);
-            int spawnY = rng.Next(0, Renderer.cam.height / Renderer.cam.scale);
+            int spawnX = rng.Next(8, (Renderer.cam.width / Renderer.cam.scale) - 16);
+            int spawnY = rng.Next(8, (Renderer.cam.height / Renderer.cam.scale) - 16);
 
-            Pickup pickup = new Pickup((Pickup.PickupType)2, spawnX, spawnY);
+            Pickup pickup = new Pickup((Pickup.PickupType)rng.Next(2), spawnX, spawnY);
             EntityManager.AddEntity(pickup);
         }
 
